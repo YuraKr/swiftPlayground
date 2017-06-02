@@ -1,0 +1,11 @@
+use_frameworks!
+
+target "ReactiveSwift" do
+    
+    abstract_target "UnitTests" do
+        target "ReactiveSwiftTests"
+        
+        pod 'Quick'
+        pod 'Nimble'
+    end
+end
