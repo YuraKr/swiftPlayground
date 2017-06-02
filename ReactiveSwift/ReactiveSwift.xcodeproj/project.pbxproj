@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		0012A03E1EE176BC00366A0D /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0012A03D1EE176BC00366A0D /* Observable.swift */; };
+		0012A03F1EE176BC00366A0D /* Observable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0012A03D1EE176BC00366A0D /* Observable.swift */; };
+		0012A0421EE193C700366A0D /* ObservableTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0012A0401EE193C700366A0D /* ObservableTests.swift */; };
 		00FF79221EE17045007F8EFA /* ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 00FF79181EE17045007F8EFA /* ReactiveSwift.framework */; };
-		00FF79271EE17045007F8EFA /* ReactiveSwiftTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FF79261EE17045007F8EFA /* ReactiveSwiftTests.swift */; };
+		00FF79271EE17045007F8EFA /* ExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 00FF79261EE17045007F8EFA /* ExampleTests.swift */; };
 		00FF79291EE17045007F8EFA /* ReactiveSwift.h in Headers */ = {isa = PBXBuildFile; fileRef = 00FF791B1EE17045007F8EFA /* ReactiveSwift.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		37F8410B5DCCC496DA52F4C9 /* Pods_ReactiveSwift.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 1712AE15DF4EBA83BF304EC5 /* Pods_ReactiveSwift.framework */; };
 		EECB87ED7CC9292FE7508BB2 /* Pods_ReactiveSwift_UnitTests_ReactiveSwiftTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 01CE96C622E774FE689537CC /* Pods_ReactiveSwift_UnitTests_ReactiveSwiftTests.framework */; };
@@ -25,11 +28,13 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0012A03D1EE176BC00366A0D /* Observable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Observable.swift; sourceTree = "<group>"; };
+		0012A0401EE193C700366A0D /* ObservableTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ObservableTests.swift; sourceTree = "<group>"; };
 		00FF79181EE17045007F8EFA /* ReactiveSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = ReactiveSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		00FF791B1EE17045007F8EFA /* ReactiveSwift.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = ReactiveSwift.h; sourceTree = "<group>"; };
 		00FF791C1EE17045007F8EFA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		00FF79211EE17045007F8EFA /* ReactiveSwiftTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = ReactiveSwiftTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		00FF79261EE17045007F8EFA /* ReactiveSwiftTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ReactiveSwiftTests.swift; sourceTree = "<group>"; };
+		00FF79261EE17045007F8EFA /* ExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExampleTests.swift; sourceTree = "<group>"; };
 		00FF79281EE17045007F8EFA /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		01CE96C622E774FE689537CC /* Pods_ReactiveSwift_UnitTests_ReactiveSwiftTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ReactiveSwift_UnitTests_ReactiveSwiftTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		1712AE15DF4EBA83BF304EC5 /* Pods_ReactiveSwift.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ReactiveSwift.framework; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -85,6 +90,7 @@
 			children = (
 				00FF791B1EE17045007F8EFA /* ReactiveSwift.h */,
 				00FF791C1EE17045007F8EFA /* Info.plist */,
+				0012A03D1EE176BC00366A0D /* Observable.swift */,
 			);
 			path = ReactiveSwift;
 			sourceTree = "<group>";
@@ -92,8 +98,9 @@
 		00FF79251EE17045007F8EFA /* ReactiveSwiftTests */ = {
 			isa = PBXGroup;
 			children = (
-				00FF79261EE17045007F8EFA /* ReactiveSwiftTests.swift */,
+				00FF79261EE17045007F8EFA /* ExampleTests.swift */,
 				00FF79281EE17045007F8EFA /* Info.plist */,
+				0012A0401EE193C700366A0D /* ObservableTests.swift */,
 			);
 			path = ReactiveSwiftTests;
 			sourceTree = "<group>";
@@ -185,6 +192,7 @@
 				TargetAttributes = {
 					00FF79171EE17045007F8EFA = {
 						CreatedOnToolsVersion = 8.3.2;
+						LastSwiftMigration = 0830;
 						ProvisioningStyle = Automatic;
 					};
 					00FF79201EE17045007F8EFA = {
@@ -311,6 +319,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0012A03E1EE176BC00366A0D /* Observable.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -318,7 +327,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				00FF79271EE17045007F8EFA /* ReactiveSwiftTests.swift in Sources */,
+				0012A03F1EE176BC00366A0D /* Observable.swift in Sources */,
+				0012A0421EE193C700366A0D /* ObservableTests.swift in Sources */,
+				00FF79271EE17045007F8EFA /* ExampleTests.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -438,6 +449,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D43466A78C2A8AC89E566EEC /* Pods-ReactiveSwift.debug.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -449,6 +461,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = yury.krohmal.dp.ua.ReactiveSwift;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SKIP_INSTALL = YES;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -457,6 +470,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 3F4F42FAADE875D01484853B /* Pods-ReactiveSwift.release.xcconfig */;
 			buildSettings = {
+				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_IDENTITY = "";
 				DEFINES_MODULE = YES;
 				DYLIB_COMPATIBILITY_VERSION = 1;
@@ -476,6 +490,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = D9ABA1D1F672F10ACF0B5025 /* Pods-ReactiveSwift-UnitTests-ReactiveSwiftTests.debug.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				INFOPLIST_FILE = ReactiveSwiftTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yury.krohmal.dp.ua.ReactiveSwiftTests;
@@ -488,6 +503,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 8E273AE1DAFC1A9D96999731 /* Pods-ReactiveSwift-UnitTests-ReactiveSwiftTests.release.xcconfig */;
 			buildSettings = {
+				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
 				INFOPLIST_FILE = ReactiveSwiftTests/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = yury.krohmal.dp.ua.ReactiveSwiftTests;
@@ -515,6 +531,7 @@
 				00FF792E1EE17045007F8EFA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 		00FF792F1EE17045007F8EFA /* Build configuration list for PBXNativeTarget "ReactiveSwiftTests" */ = {
 			isa = XCConfigurationList;
@@ -523,6 +540,7 @@
 				00FF79311EE17045007F8EFA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};

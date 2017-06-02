@@ -1,7 +1,7 @@
 import Quick
 import Nimble
 
-class ReactiveSwiftTests: QuickSpec {
+class ExampleTests: QuickSpec {
     
     override func spec() {
         describe("the 'Documentation' directory") {
