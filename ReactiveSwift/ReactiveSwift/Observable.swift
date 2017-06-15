@@ -8,42 +8,57 @@
 
 import UIKit
 
-
-public class OperationResult<T>{
-    public typealias ResultClosure = (_ result: T) -> Void
+public class Operation<T> {
     
-    let resultAction:ResultClosure
+    public typealias OperationClosure = (_ resultClosure: ResultClosure)->(Void)
+    public typealias ResultClosure = (_ value: T) -> Void
     
+    private let operationClosure : OperationClosure
     
-    init(_ resultClosure:@escaping ResultClosure) {
-        resultAction = resultClosure
+    public static func create(action: @escaping OperationClosure) -> Operation {
+        return Operation(action:  action)
     }
     
-    func result(result: T){
-        resultAction(result);
+    
+    fileprivate init(action: @escaping OperationClosure){
+        self.operationClosure = action
+    }
+    
+    public func observe(_ closure: @escaping Operation<T>.ResultClosure ) ->Observable<T> {
+        return Observable<T>.create(action: self, result: closure);
+    }
+    
+    public func exec(res: ResultClosure){
+        self.operationClosure(res)
     }
 }
 
 public class Observable<T> {
-    public typealias Action = (_ result: OperationResult<T>)->(Void)
-    let observableAction :Action
-    let observableResult :OperationResult<T>
     
+    private var operation         : Operation<T>
+    private var operationObserverClosure : Operation<T>.ResultClosure
     
-    public init(action: @escaping Action, result: OperationResult<T>) {
-        observableAction = action
-        observableResult = result
+    fileprivate init(action: Operation<T>, result: @escaping Operation<T>.ResultClosure){
+        self.operation = action
+        self.operationObserverClosure = result
     }
     
-    func notify(){
-        observableAction(observableResult)
+    public static func create(action: Operation<T>, result: @escaping Operation<T>.ResultClosure) -> Observable<T> {
+        return Observable(action:  action, result: result)
     }
     
-    static func createObserverable<T>(action: @escaping Observable<T>.Action, result: @escaping OperationResult<T>.ResultClosure) -> Observable<T> {
+    public func observe(_ closure: @escaping Operation<T>.ResultClosure ) ->Observable<T> {
         
-        let resultObserver = OperationResult<T>(result)
+        let oper = Operation<T>.create { (resultClosure) -> (Void) in
+            self.operation.exec(res: { (value) in
+                self.operationObserverClosure(value)
+            })
+        }
         
-        let oserver = Observable<T>(action: action, result: resultObserver)
-        return oserver
+        return Observable<T>.create(action: oper, result: closure);
+    }
+    
+    public func exec(){
+        self.operation.exec(res: self.operationObserverClosure)
     }
 }
