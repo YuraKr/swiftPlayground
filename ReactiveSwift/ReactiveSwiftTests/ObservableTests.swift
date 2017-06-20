@@ -5,46 +5,45 @@ class ObservableTests: QuickSpec {
 
     override func spec() {
         
-//        describe("Operation<T>") {
-//            it("should init and execute ", closure: {
-//                
-//                var result = ""
-//                var sequence = ""
-//                
-//                let _ = Operation<String>.create(action: { (completed) -> (Void) in
-//                    sequence += "1"
-//                    completed("complete")
-//                    sequence += "3"
-//                }).observe({ (val) in
-//                    sequence += "2"
-//                    result = val
-//                }).exec()
-//                
-//                expect(result).to(equal("complete"))
-//                expect(sequence).to(equal("123"))
-//               
-//            })
-//        }
+      
+        // Операция - это получение результата
+        // Создание операции - это связывание данных с сообщением результата
+        // Завершение операции - это событие для наблюдателей (если они есть)
         
         describe("Operation<T>") {
-            it("should init and execute ", closure: {
+            it("should init and execute", closure: {
                 
-                var result = ""
-                var sequence = ""
+                // создание операции
+                let _ = Operation<Void>.create(action: { (completed) -> (Void) in
+                    completed()
+                })
                 
                 let _ = Operation<String>.create(action: { (completed) -> (Void) in
-                    sequence += "1"
-                    completed("complete")
-                    sequence += "4"
-                }).observe({ (val) in
-                    sequence += "2"
-                }).observe({ (val) in
-                    sequence += "3"
-                    result = val
-                }).exec()
+                    completed("1")
+                })
                 
-                expect(result).to(equal("complete"))
-                expect(sequence).to(equal("1234"))
+                let _ = Operation<(name: String, id:Int)>.create(action: { (completed) -> (Void) in
+                    completed( (name: "1", id: 1) )
+                })
+                
+                let _ = Operation<(name: String, id:Int, delete: Bool)>.create(action: { (completed) -> (Void) in
+                    completed( (name: "1", id: 1, delete:true) )
+                })
+            })
+            
+            it("should init operation and execute", closure: {
+                
+                let signalCreator = Operation<String>.create(action: { (completed) -> (Void) in
+                    completed("1")
+                });
+                
+                
+                var result = ""
+                signalCreator.exec(result: { (value) in
+                    result += value
+                })
+                
+                expect(result).to(equal("1"))
                 
             })
         }
