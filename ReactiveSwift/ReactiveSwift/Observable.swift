@@ -10,15 +10,15 @@ import UIKit
 
 
 
-public class Operation<T> {
+public class ObserverOperation<T> {
     
     public typealias OperationClosure = (_ completed: @escaping CompletionClosure)->(Void)
     public typealias CompletionClosure = (_ value: T) -> Void
     
     private var operationClosure  : OperationClosure
     
-    public static func create(action: @escaping OperationClosure) -> Operation {
-        return Operation(action:  action)
+    public static func create(action: @escaping OperationClosure) -> ObserverOperation {
+        return ObserverOperation(action:  action)
     }
     
     fileprivate init(action: @escaping OperationClosure){
@@ -29,7 +29,7 @@ public class Operation<T> {
         operationClosure(result)
     }
     
-    func after(action: @escaping CompletionClosure) -> Operation<T> {
+    func after(action: @escaping CompletionClosure) -> ObserverOperation<T> {
         return self
     }
 }
