@@ -24,12 +24,26 @@ public class ObserverOperation<T> {
     fileprivate init(action: @escaping OperationClosure){
         operationClosure = action
     }
-    
-    public func exec(result: @escaping CompletionClosure){
-        operationClosure(result)
+
+    public func next(resultObserver: @escaping CompletionClosure) -> ObserverOperation{
+        
+        
+        let baseoperation = operationClosure
+        
+        let operation = ObserverOperation<T>.create { (completed) -> (Void) in
+            
+            let newCompletion  = { (value: T) -> Void in
+                resultObserver(value)
+                completed(value)
+            }
+            
+            baseoperation(newCompletion)
+        }
+        
+        return operation
     }
     
-    func after(action: @escaping CompletionClosure) -> ObserverOperation<T> {
-        return self
+    public func subscribe(resultObserver: @escaping CompletionClosure){
+        operationClosure(resultObserver)
     }
 }

@@ -31,20 +31,37 @@ class ObservableTests: QuickSpec {
                 })
             })
             
-            it("should init operation and execute", closure: {
+            it("subscribe", closure: {
                 
                 var result = ""
                 
                 ObserverOperation<String>.create(action: { (completed) -> (Void) in
                     completed("1")
                     completed("2")
-                }).exec(result: { (value) in
+                }).subscribe(resultObserver: { (value) in
                     result += value
                 })
                 
                 expect(result).to(equal("12"))
                 
             })
+            
+            it("next", closure: {
+                
+                var result = ""
+                
+                ObserverOperation<String>.create(action: { (completed) -> (Void) in
+                    completed("1")
+                }).next(resultObserver: { (value) in
+                    result += value
+                }).subscribe(resultObserver: { (value) in
+                    result += value
+                })
+                
+                expect(result).to(equal("11"))
+                
+            })
+            
         }
     }
 }
