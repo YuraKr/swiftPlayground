@@ -11,54 +11,56 @@ class ObservableTests: QuickSpec {
         // Завершение операции - это событие для наблюдателей (если они есть)
         
         describe("Operation<T>") {
-            it("should init and execute", closure: {
-                
+            it("create operation", closure: {
                 // создание операции
-                let _ = ObserverOperation<Void>.create(action: { (completed) -> (Void) in
+                let _ = ObserveOperation<Void>.create(action: { (completed) -> (Void) in
                     completed()
                 })
                 
-                let _ = ObserverOperation<String>.create(action: { (completed) -> (Void) in
+                let _ = ObserveOperation<String>.create(action: { (completed) -> (Void) in
                     completed("1")
                 })
                 
-                let _ = ObserverOperation<(name: String, id:Int)>.create(action: { (completed) -> (Void) in
-                    completed( (name: "1", id: 1) )
-                })
-                
-                let _ = ObserverOperation<(name: String, id:Int, delete: Bool)>.create(action: { (completed) -> (Void) in
-                    completed( (name: "1", id: 1, delete:true) )
+                let _ = ObserveOperation<(result: String?, error:NSError?)>.create(action: { (completed) -> (Void) in
+                    completed( (result: "1", error: nil ) )
+                    completed( (result: nil, error: NSError() ) )
                 })
             })
             
-            it("subscribe", closure: {
+            it("after oserver", closure: {
+                
+                let asyncResult = "1"
                 
                 var result = ""
                 
-                ObserverOperation<String>.create(action: { (completed) -> (Void) in
-                    completed("1")
-                    completed("2")
-                }).subscribe(resultObserver: { (value) in
-                    result += value
+                ObserveOperation<String>.create(action: { (completed) -> (Void) in
+                    completed(asyncResult)
+                }).after(comp: { (res) in
+                    result += "after1 \(res);"
+                }).after(comp: { (res) in
+                    result += "after2 \(res);"
+                }).call(comp: { (res:String) in
+                    result += "call \(res);"
                 })
                 
-                expect(result).to(equal("12"))
-                
+                expect(result).to(equal("after1 1;after2 1;call 1;"))
             })
             
-            it("next", closure: {
+            it("simple oserver", closure: {
                 
+                let param: Int = 1
                 var result = ""
                 
-                ObserverOperation<String>.create(action: { (completed) -> (Void) in
-                    completed("1")
-                }).next(resultObserver: { (value) in
-                    result += value
-                }).subscribe(resultObserver: { (value) in
-                    result += value
+                ObserveOperation<Int>.create(action: { (completed) -> (Void) in
+                    completed(param)
+                }).map(conv: { (val:Int) -> String in
+                    return String(val)
+                }).call(comp: { (res:String) in
+                    result += res
                 })
                 
-                expect(result).to(equal("11"))
+                expect(result).to(equal("1"))
+                
                 
             })
             
