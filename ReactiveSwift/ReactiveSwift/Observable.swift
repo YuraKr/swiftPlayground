@@ -9,6 +9,11 @@
 import UIKit
 
 
+enum ReactiveResult {
+    case Success
+    case Error(error: Error)
+}
+
 public class Operation {
     public typealias Closure = () -> ()
 }
@@ -21,75 +26,77 @@ public class Converteroperation<From, To> {
     public typealias Closure = (_ value: From) -> To
 }
 
+public class Error {
+    public typealias Closure = ()->()
+}
+
 
 public class ObserveOperation<T> {
     
-    public typealias OperationClosure = (_ completed: @escaping Result<T>.ResultClosure)->(Void)
+    public typealias OperationClosure = (_ completed: @escaping Result<T>.ResultClosure) throws ->(Void)
     
     private let operationClosure  : OperationClosure
     
-    fileprivate init(action: @escaping OperationClosure){
-        operationClosure = action
-    }
+    
     
     public static func create(action: @escaping OperationClosure) -> ObserveOperation {
         return ObserveOperation(action:  action)
     }
     
-    public func call(comp: @escaping Result<T>.ResultClosure){
-        operationClosure(comp)
+    fileprivate init(action: @escaping OperationClosure){
+        operationClosure = action
     }
     
-    public func after(comp: @escaping Result<T>.ResultClosure) -> ObserveOperation<T>{
+    public func call(_ comp: @escaping Result<T>.ResultClosure) throws {
+        callWithCatch(comp) { 
+            print("Unhandled error")
+        }
+    }
+    
+    public func callWithCatch(_ comp: @escaping Result<T>.ResultClosure, _ errorHandler: @escaping Error.Closure) {
+        do{
+        try operationClosure(comp)
+        } catch {
+            errorHandler()
+        }
+    }
+    
+    public func after(_ comp: @escaping Result<T>.ResultClosure) -> ObserveOperation<T>{
         let op = ObserveOperation<T>.create { (result) -> (Void) in
             
-            self.call(comp: { (value: T) in
+            try self.call(){ (value: T) in
                 comp(value)
                 result(value)
-            })
+            }
         }
         
         return op
     }
     
+    public func withCatch(_ comp: @escaping Result<T>.ResultClosure, _ errorHandler: @escaping Error.Closure) -> ObserveOperation<T>{
+        let op = ObserveOperation<T>.create { (result) -> (Void)  in
+                
+                self.callWithCatch({ (value: T) in
+                    comp(value)
+                    result(value)
+                }, errorHandler)
+            
+        }
+        
+        return op
+    }
     
     public func map<To>(conv: @escaping Converteroperation<T,To>.Closure) -> ObserveOperation<To>{
         
         let op = ObserveOperation<To>.create { (result) -> (Void) in
             
-            self.call(comp: { (value) in
+            try self.call(){ (value) in
                 
                 let res:To = conv(value)
                 result(res)
-            })
+            }
         }
         
         return op
     }
-}
-
-
-public class Observer<T>
-{
-    public static func create<O>(operation: ObserveOperation<O>) -> Observer<O> {
-        return Observer<O>(operation: operation)
-    }
-    
-    let observableOperation:ObserveOperation<T>
-    
-    fileprivate init(operation: ObserveOperation<T>){
-        observableOperation = operation
-    }
-    
-    
-    func observe(_ closure: @escaping Result<T>.ResultClosure) {
-        observableOperation.call(comp: closure)
-    }
-    
-//    func map<T, To>(converter: Converter<T, To>) -> Observer<T1>{
-//        let op =
-//        
-//        Observer<To>.create(operation: <#T##ObserveOperation<O>#>)
-//    }
-    
 }
