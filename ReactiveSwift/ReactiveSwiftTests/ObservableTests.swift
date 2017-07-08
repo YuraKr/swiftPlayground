@@ -84,25 +84,43 @@ class ObservableTests: QuickSpec {
             
             
             context("catch", {
-                it("catch all", closure: {
-                    
-                    
-                    
+                
+                it("catch, no error", closure: {
                     
                     var result = ""
                     
                     try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
-                        throw NSError()
-                    }).withCatch({ (val: String) in
-                       result += "val"
-                    }, { 
-                       result += "error"
-                    }).call() { (res:String) in
+                        completed("result")
+                    }).Catch() {
+                        result += "error1"
+                    }.Catch() {
+                        result += "error2"
+                    }.call() { (res:String) in
                         result += res
                     }
                     
-                    expect(result).to(equal("error"))
+                    expect(result).to(equal("result"))
                 })
+                
+                it("catch, error map", closure: {
+                    
+                    var result = ""
+                    
+                    try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
+                        completed("test")
+                    }).Catch() {
+                        result += "error1"
+                    }.map(conv: { (val:String) -> String in
+                        throw NSError()
+                    }).Catch() {
+                        result += "error2"
+                    }.call() { (res:String) in
+                        result += "result:\(res)"
+                    }
+                    
+                    expect(result).to(equal("error2"))
+                })
+                
             })
             
         }

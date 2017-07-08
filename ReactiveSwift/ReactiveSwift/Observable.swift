@@ -56,7 +56,7 @@ public class ObserveOperation<T> {
     public func callWithCatch(_ comp: @escaping Result<T>.ResultClosure, _ errorHandler: @escaping Error.Closure) {
         do{
         try operationClosure(comp)
-        } catch {
+        } catch _ {
             errorHandler()
         }
     }
@@ -73,19 +73,6 @@ public class ObserveOperation<T> {
         return op
     }
     
-    public func withCatch(_ comp: @escaping Result<T>.ResultClosure, _ errorHandler: @escaping Error.Closure) -> ObserveOperation<T>{
-        let op = ObserveOperation<T>.create { (result) -> (Void)  in
-                
-                self.callWithCatch({ (value: T) in
-                    comp(value)
-                    result(value)
-                }, errorHandler)
-            
-        }
-        
-        return op
-    }
-    
     public func map<To>(conv: @escaping Converteroperation<T,To>.Closure) -> ObserveOperation<To>{
         
         let op = ObserveOperation<To>.create { (result) -> (Void) in
@@ -95,6 +82,20 @@ public class ObserveOperation<T> {
                 let res:To = conv(value)
                 result(res)
             }
+        }
+        
+        return op
+    }
+    
+    // Error handling
+    
+    public func Catch(_ errorHandler: @escaping Error.Closure) -> ObserveOperation<T>{
+        let op = ObserveOperation<T>.create { (result) -> (Void)  in
+            
+            self.callWithCatch({ (value: T) in
+                result(value)
+            }, errorHandler)
+            
         }
         
         return op
