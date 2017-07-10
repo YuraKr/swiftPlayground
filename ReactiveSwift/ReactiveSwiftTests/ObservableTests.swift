@@ -16,16 +16,16 @@ class ObservableTests: QuickSpec {
             it("create operation", closure: {
                 // создание операции
                 let _ = ObserveOperation<Void>.create(action: { (completed) -> (Void) in
-                    completed()
+                    try completed()
                 })
                 
                 let _ = ObserveOperation<String>.create(action: { (completed) -> (Void) in
-                    completed("1")
+                    try completed("1")
                 })
                 
                 let _ = ObserveOperation<(result: String?, error:NSError?)>.create(action: { (completed) -> (Void) in
-                    completed( (result: "1", error: nil ) )
-                    completed( (result: nil, error: NSError() ) )
+                    try completed( (result: "1", error: nil ) )
+                    try completed( (result: nil, error: NSError() ) )
                 })
             })
             
@@ -36,7 +36,7 @@ class ObservableTests: QuickSpec {
                 var result = ""
                 
                 try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
-                    completed(asyncResult)
+                    try completed(asyncResult)
                 }).after() { (res) in
                     result += "after1 \(res);"
                 }.after() { (res) in
@@ -55,7 +55,7 @@ class ObservableTests: QuickSpec {
                     var result = ""
                     
                     try! ObserveOperation<Int>.create(action: { (completed) -> (Void) in
-                        completed(param)
+                        try completed(param)
                     }).map(conv: { (val:Int) -> String in
                         return String(val)
                     }).call() { (res:String) in
@@ -71,7 +71,7 @@ class ObservableTests: QuickSpec {
                     var result = ""
                     
                     try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
-                        completed(param)
+                        try completed(param)
                     }).map(conv: { (val:String) -> String in
                         return val.uppercased()
                     }).call() { (res:String) in
@@ -90,7 +90,7 @@ class ObservableTests: QuickSpec {
                     var result = ""
                     
                     try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
-                        completed("result")
+                        try completed("result")
                     }).Catch() {
                         result += "error1"
                     }.Catch() {
@@ -106,15 +106,23 @@ class ObservableTests: QuickSpec {
                     
                     var result = ""
                     
-                    try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
-                        completed("test")
-                    }).Catch() {
-                        result += "error1"
-                    }.map(conv: { (val:String) -> String in
-                        throw NSError()
-                    }).Catch() {
+                    let op = ObserveOperation<String>.create() { (completed) -> (Void) in
+                        try completed("test")
+                    }.Catch() {
                         result += "error2"
-                    }.call() { (res:String) in
+                    }.map() { (res:String) -> String in
+                        return res
+                    }.map() { (res:String) -> String in
+                        return res
+                    }.map() { (res:String) -> String in
+                        expect(res).to(equal("test"))
+                        throw NSError()
+                    }.Catch() {
+                        result += "error2"
+                    }
+                    
+                    try? op.call() { (res:String) in
+                        expect(res).to(equal("TEST"))
                         result += "result:\(res)"
                     }
                     

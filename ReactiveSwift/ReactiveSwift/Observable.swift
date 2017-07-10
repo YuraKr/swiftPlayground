@@ -14,16 +14,18 @@ enum ReactiveResult {
     case Error(error: Error)
 }
 
-public class Operation {
-    public typealias Closure = () -> ()
+public class Operation<T> {
+//    public typealias Closure = (_ completed: @escaping Result<T>.ResultClosure) throws ->(Void)
+    public typealias ThrowClosure = (_ completed: @escaping Result<T>.ResultThrowClosure) throws ->(Void)
 }
 
 public class Result<T> {
-    public typealias ResultClosure = (_ value: T) -> Void
+    //public typealias ResultClosure = (_ value: T) -> Void
+    public typealias ResultThrowClosure = (_ value: T) throws -> Void
 }
 
-public class Converteroperation<From, To> {
-    public typealias Closure = (_ value: From) -> To
+public class ConvertOperation<From, To> {
+    public typealias Closure = (_ value: From) throws -> To
 }
 
 public class Error {
@@ -33,54 +35,44 @@ public class Error {
 
 public class ObserveOperation<T> {
     
-    public typealias OperationClosure = (_ completed: @escaping Result<T>.ResultClosure) throws ->(Void)
-    
-    private let operationClosure  : OperationClosure
+    private let operationClosure  : Operation<T>.ThrowClosure
     
     
-    
-    public static func create(action: @escaping OperationClosure) -> ObserveOperation {
+    public static func create(action: @escaping Operation<T>.ThrowClosure) -> ObserveOperation {
         return ObserveOperation(action:  action)
     }
     
-    fileprivate init(action: @escaping OperationClosure){
+    fileprivate init(action: @escaping Operation<T>.ThrowClosure){
         operationClosure = action
     }
     
-    public func call(_ comp: @escaping Result<T>.ResultClosure) throws {
-        callWithCatch(comp) { 
-            print("Unhandled error")
-        }
-    }
+//    public func call(_ comp: @escaping Result<T>.ResultClosure) rethrows {
+//        try operationClosure(comp)
+//    }
     
-    public func callWithCatch(_ comp: @escaping Result<T>.ResultClosure, _ errorHandler: @escaping Error.Closure) {
-        do{
+    public func call(_ comp: @escaping Result<T>.ResultThrowClosure) throws {
         try operationClosure(comp)
-        } catch _ {
-            errorHandler()
-        }
     }
     
-    public func after(_ comp: @escaping Result<T>.ResultClosure) -> ObserveOperation<T>{
+    public func after(_ comp: @escaping Result<T>.ResultThrowClosure) -> ObserveOperation<T>{
         let op = ObserveOperation<T>.create { (result) -> (Void) in
             
-            try self.call(){ (value: T) in
-                comp(value)
-                result(value)
+            try self.operationClosure(){ (value: T) in
+                try comp(value)
+                try result(value)
             }
         }
         
         return op
     }
     
-    public func map<To>(conv: @escaping Converteroperation<T,To>.Closure) -> ObserveOperation<To>{
+    public func map<To>(conv: @escaping ConvertOperation<T,To>.Closure) -> ObserveOperation<To>{
         
         let op = ObserveOperation<To>.create { (result) -> (Void) in
             
-            try self.call(){ (value) in
-                
-                let res:To = conv(value)
-                result(res)
+            try self.call(){ (value: T) in
+                let res:To = try conv(value)
+                try result(res)
             }
         }
         
@@ -92,10 +84,11 @@ public class ObserveOperation<T> {
     public func Catch(_ errorHandler: @escaping Error.Closure) -> ObserveOperation<T>{
         let op = ObserveOperation<T>.create { (result) -> (Void)  in
             
-            self.callWithCatch({ (value: T) in
-                result(value)
-            }, errorHandler)
-            
+            do{
+                try self.operationClosure(result)
+            } catch _ {
+                errorHandler()
+            }
         }
         
         return op
