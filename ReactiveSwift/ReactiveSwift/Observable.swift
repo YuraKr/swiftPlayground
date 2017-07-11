@@ -78,12 +78,12 @@ public class ObserveOperation<T> {
     
     // Error handling
     
-    public func Catch(_ errorHandler: @escaping ErrorHandler<Error>.Closure) -> ObserveOperation<T>{
+    public func CatchError<ErrorType>(_ errorHandler: @escaping ErrorHandler<ErrorType>.Closure) -> ObserveOperation<T>{
+        
         let op = ObserveOperation<T>.create { (result) -> (Void)  in
-            
-            do{
+            do {
                 try self.operationClosure(result)
-            } catch {
+            } catch let error as ErrorType {
                 errorHandler(error)
             }
         }
@@ -91,12 +91,12 @@ public class ObserveOperation<T> {
         return op
     }
     
-    public func CatchError<ErrorType>(_ errorHandler: @escaping ErrorHandler<ErrorType>.Closure) -> ObserveOperation<T>{
-        
+    public func Catch(_ errorHandler: @escaping ErrorHandler<Error>.Closure) -> ObserveOperation<T>{
         let op = ObserveOperation<T>.create { (result) -> (Void)  in
-            do {
+            
+            do{
                 try self.operationClosure(result)
-            } catch let error as ErrorType {
+            } catch {
                 errorHandler(error)
             }
         }
