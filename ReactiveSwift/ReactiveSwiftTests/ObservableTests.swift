@@ -8,12 +8,12 @@ class ObservableTests: QuickSpec {
     override func spec() {
         
       
-        // Операция - это получение результата
+        // Операция - это цепочка действий для получение результата
         // Создание операции - это связывание данных с сообщением результата
         // Завершение операции - это событие для наблюдателей (если они есть)
         
         describe("Operation<T>") {
-            it("create operation", closure: {
+            it("create observe operation", closure: {
                 // создание операции
                 let _ = ObserveOperation<Void>.create(action: { (completed) -> (Void) in
                     try completed()
@@ -28,6 +28,27 @@ class ObservableTests: QuickSpec {
                     try completed( (result: nil, error: NSError() ) )
                 })
             })
+            
+            it("full specification", closure: {
+                
+                var log = ""
+                let op = ObserveOperation<Int>.create() { (completion) -> (Void) in
+                    log+="operationresult;"
+                    try completion(1)
+                }.after(){ (res:Int) in
+                    log+="after;"
+                }.map() { (value:Int) -> String in
+                    log+="convert;"
+                    return String(value)
+                }
+                
+                try! op.call() { (res:String) in
+                    log += "res \(res);"
+                }
+                
+                expect(log).to(equal("operationresult;after;convert;res 1;"))
+            })
+            
             
             it("after, oserve operation value", closure: {
                 
@@ -56,9 +77,9 @@ class ObservableTests: QuickSpec {
                     
                     try! ObserveOperation<Int>.create(action: { (completed) -> (Void) in
                         try completed(param)
-                    }).map(conv: { (val:Int) -> String in
+                    }).map(){ (val:Int) -> String in
                         return String(val)
-                    }).call() { (res:String) in
+                    }.call() { (res:String) in
                         result += res
                     }
                     
@@ -72,9 +93,9 @@ class ObservableTests: QuickSpec {
                     
                     try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
                         try completed(param)
-                    }).map(conv: { (val:String) -> String in
+                    }).map() { (val:String) -> String in
                         return val.uppercased()
-                    }).call() { (res:String) in
+                    }.call() { (res:String) in
                         result += res
                     }
                     

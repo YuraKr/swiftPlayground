@@ -63,7 +63,7 @@ public class ObserveOperation<T> {
         return op
     }
     
-    public func map<To>(conv: @escaping ConvertOperation<T,To>.Closure) -> ObserveOperation<To>{
+    public func map<To>(_ conv: @escaping ConvertOperation<T,To>.Closure) -> ObserveOperation<To>{
         
         let op = ObserveOperation<To>.create { (result) -> (Void) in
             
