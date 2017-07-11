@@ -15,6 +15,8 @@ enum ReactiveResult {
 }
 
 public class Operation<T> {
+    public typealias Closure = () throws ->()
+
 //    public typealias Closure = (_ completed: @escaping Result<T>.ResultClosure) throws ->(Void)
     public typealias ThrowClosure = (_ completed: @escaping Result<T>.ResultThrowClosure) throws ->(Void)
 }
@@ -28,10 +30,9 @@ public class ConvertOperation<From, To> {
     public typealias Closure = (_ value: From) throws -> To
 }
 
-public class Error {
-    public typealias Closure = ()->()
+public class ErrorHandler<T> {
+    public typealias Closure = (_ error:T)->()
 }
-
 
 public class ObserveOperation<T> {
     
@@ -45,10 +46,6 @@ public class ObserveOperation<T> {
     fileprivate init(action: @escaping Operation<T>.ThrowClosure){
         operationClosure = action
     }
-    
-//    public func call(_ comp: @escaping Result<T>.ResultClosure) rethrows {
-//        try operationClosure(comp)
-//    }
     
     public func call(_ comp: @escaping Result<T>.ResultThrowClosure) throws {
         try operationClosure(comp)
@@ -81,13 +78,26 @@ public class ObserveOperation<T> {
     
     // Error handling
     
-    public func Catch(_ errorHandler: @escaping Error.Closure) -> ObserveOperation<T>{
+    public func Catch(_ errorHandler: @escaping ErrorHandler<Error>.Closure) -> ObserveOperation<T>{
         let op = ObserveOperation<T>.create { (result) -> (Void)  in
             
             do{
                 try self.operationClosure(result)
-            } catch _ {
-                errorHandler()
+            } catch {
+                errorHandler(error)
+            }
+        }
+        
+        return op
+    }
+    
+    public func CatchError<ErrorType>(_ errorHandler: @escaping ErrorHandler<ErrorType>.Closure) -> ObserveOperation<T>{
+        
+        let op = ObserveOperation<T>.create { (result) -> (Void)  in
+            do {
+                try self.operationClosure(result)
+            } catch let error as ErrorType {
+                errorHandler(error)
             }
         }
         
