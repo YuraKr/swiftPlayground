@@ -35,7 +35,7 @@ class ObservableTests: QuickSpec {
                 let op = ObserveOperation<Int>.create() { (completion) -> (Void) in
                     log+="operationresult;"
                     try completion(1)
-                }.after(){ (res:Int) in
+                }.then(){ (res:Int) in
                     log+="after;"
                 }.map() { (value:Int) -> String in
                     log+="convert;"
@@ -58,9 +58,9 @@ class ObservableTests: QuickSpec {
                 
                 try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
                     try completed(asyncResult)
-                }).after() { (res) in
+                }).then() { (res) in
                     result += "after1 \(res);"
-                }.after() { (res) in
+                }.then() { (res) in
                     result += "after2 \(res);"
                 }.call() { (res:String) in
                     result += "call \(res);"

@@ -51,7 +51,7 @@ public class ObserveOperation<T> {
         try operationClosure(comp)
     }
     
-    public func after(_ comp: @escaping Result<T>.ResultThrowClosure) -> ObserveOperation<T>{
+    public func then(_ comp: @escaping Result<T>.ResultThrowClosure) -> ObserveOperation<T>{
         let op = ObserveOperation<T>.create { (result) -> (Void) in
             
             try self.operationClosure(){ (value: T) in
