@@ -50,14 +50,12 @@ class ObservableTests: QuickSpec {
             })
             
             
-            it("after, oserve operation value", closure: {
-                
-                let asyncResult = "1"
+            it("then, oserve operation value", closure: {
                 
                 var result = ""
                 
                 try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
-                    try completed(asyncResult)
+                    try completed("1")
                 }).then() { (res) in
                     result += "after1 \(res);"
                 }.then() { (res) in
@@ -112,7 +110,7 @@ class ObservableTests: QuickSpec {
                     
                     try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
                         try completed("result")
-                    }).Catch() {(error) in
+                    }).catchAll() {(error) in
                         result += "error2"
                     }.call() { (res:String) in
                         result += res
@@ -127,7 +125,7 @@ class ObservableTests: QuickSpec {
                     
                     try! ObserveOperation<String>.create(action: { (completed) -> (Void) in
                         throw NSError()
-                    }).Catch() { (error) in
+                    }).catchAll() { (error) in
                         result += "error"
                     }.call() { (res:String) in
                         result += res
@@ -144,7 +142,7 @@ class ObservableTests: QuickSpec {
                         try completed("test")
                     }.map() { (res:String) -> String in
                         throw NSError()
-                    }.Catch {(error) in
+                    }.catchAll {(error) in
                         result += "catch"
                     }.call() { (res:String) in
                         result += "result:\(res)"
@@ -206,7 +204,7 @@ class ObservableTests: QuickSpec {
                             result+="catch1"
                         }.CatchError(){ (error: OtherError) in
                             result+="catch2"
-                        }.Catch {(error) in
+                        }.catchAll {(error) in
                             result+="catch"
                         }.call() { (res:String) in
                             result += "result:\(res)"

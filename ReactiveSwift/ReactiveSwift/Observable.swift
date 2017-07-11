@@ -91,7 +91,7 @@ public class ObserveOperation<T> {
         return op
     }
     
-    public func Catch(_ errorHandler: @escaping ErrorHandler<Error>.Closure) -> ObserveOperation<T>{
+    public func catchAll(_ errorHandler: @escaping ErrorHandler<Error>.Closure) -> ObserveOperation<T>{
         let op = ObserveOperation<T>.create { (result) -> (Void)  in
             
             do{
